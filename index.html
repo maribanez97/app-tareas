@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Tareas</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+        .Body {
+            background: #e8e8e8;
+            padding: 3rem 3rem 0 3rem;
+            height: 100vh;
+        }
+
+        .TituloPagina {
+            text-align: center;
+            padding-bottom: 2rem;
+        }
+
+        .CajaListaDeTareas {
+            padding: 0.3rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-height: 576px;
+            overflow-y: scroll;
+
+        }
+
+        .ListaDeTareas {
+            width: 100%;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .FormTarea {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .Tarea {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            padding-bottom: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .TareaBotones {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+        }
+
+        .BotonTarea {
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.6rem;
+            border: 0px;
+            border-radius: 54px;
+            background: #e0e0e0;
+            box-shadow:  2px 2px 6px #bababa;
+        }
+
+        .BotonTarea-eliminar {
+            background: #d82525;
+        }
+
+        .BotonTarea-completar {
+            background: #52d825;
+        }
+
+        .TxtTarea {
+            width: 90%;
+            max-width: 220px;
+            height: 26px;
+            padding: 8px;
+            border-radius: 12px;
+            border: 1.5px solid lightgrey;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0px 0px 20px -18px;
+        }
+
+        .TxtTarea:active {
+            transform: scale(0.95);
+        }
+
+        .TxtTarea:focus {
+            border: 2px solid grey;
+        }
+
+        .Botones {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 2rem;
+            position: fixed;
+            bottom: 3rem;
+            background-color: #e8e8e8;
+        }
+
+        .Boton {
+            font-weight: bold;
+            color: #3f3f3f;
+            padding: 0.7em 1.7em;
+            font-size: 12px;
+            border-radius: 0.5em;
+            background: #e8e8e8;
+            cursor: pointer;
+            border: 1px solid #e8e8e8;
+            transition: all 0.3s;
+            box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+        }
+
+        .Boton:active {
+            color: #666;
+            box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+        }
+    </style>
+
+</head>
+
+<body class="Body">
+    <h1 class="TituloPagina">LISTA DE TAREAS</h1>
+
+    <div class="CajaListaDeTareas">
+        <ul class="ListaDeTareas" id="ListaDeTareas">
+            <li></li>
+        </ul>
+    </div>
+
+    <form id="FormTarea" class="FormTarea">
+        <input id="TxtTarea" class="TxtTarea" type="text" name="tuTarea" placeholder="Ingrese una tarea">
+        <button class="Boton" type="submit">Añadir</button>
+    </form>
+
+    <div class="Botones">
+        <button data-tab="Pendientes" id="BotonPendientes" class="Boton">Pendientes</button>
+        <button data-tab="Todas" id="BotonTodas" class="Boton">Todas</button>
+        <button data-tab="Perfil" id="BotonPerfil" class="Boton">Perfil</button>
+    </div>
+
+
+    <script>
+        //--------------------------------------------
+        // 1. Constantes y variables
+        //--------------------------------------------
+        const formu = document.getElementById("FormTarea")
+        const txtTarea = document.getElementById("TxtTarea")
+        const boxTareas = document.getElementById("ListaDeTareas")
+
+        const botonPendientes = document.getElementById("BotonPendientes")
+        const botonTodas = document.getElementById("BotonTodas")
+        const botonPerfil = document.getElementById("BotonPerfil")
+        
+
+        let listaDeTareas = [
+            { id: 1, titulo: "Tarea 1", isCompletada: true },
+            { id: 2, titulo: "Tarea 2", isCompletada: false },
+            { id: 3, titulo: "Tarea 3", isCompletada: false }
+        ];
+
+
+
+        //--------------------------------------------
+        // 2. Funciones utilitarias (reutilizables entre proyectos)
+        //    * esto también se suele hacer en un archivo a parte, por ejemplo: utils.js
+        //--------------------------------------------     
+
+
+
+        //--------------------------------------------
+        // 3. Funciones principales de nuestra web/programa/app
+        //--------------------------------------------
+        function mostrarTareas() {
+            boxTareas.innerHTML = "";
+            listaDeTareas.forEach((tarea) => {
+                const titulo = tarea.titulo;
+                const id = tarea.id
+                const isChecked = tarea.isCompletada ? "checked" : "";
+                boxTareas.innerHTML += `<li class="Tarea">
+                                            <div class="TareaTexto">
+                                                <input type="checkbox" id="${id}" name="chk_completada" ${isChecked}/>
+                                                <label for="${id}">${titulo}</label>
+                                            </div>
+                                            <div class="TareaBotones">
+                                                <button class= "BotonTarea BotonTarea-eliminar" onclick="eliminarTarea(${id})"><i class="fa-solid fa-trash"></i></button>
+                                                <button class= "BotonTarea BotonTarea-completar" onclick="completarTarea(${id})"><i class="fa-solid fa-check"></i></button>
+                                            </div>
+                                        </li>`
+            });
+        }
+
+        function agregarTarea() {
+            const nuevaTarea = txtTarea.value.trim();
+            if (nuevaTarea == "") { alert("Por favor ingresa una tarea válida"); return; }
+            txtTarea.value = "";
+            const nuevoID = parseInt(Math.random() * 100);
+            const objetoTarea = { id: nuevoID, titulo: nuevaTarea, isCompletada: false };
+            listaDeTareas.push(objetoTarea);
+            mostrarTareas();
+        }
+
+        function completarTarea(idTarea){
+                const tarea = listaDeTareas.find((t) => t.id == idTarea);
+                tarea.isCompletada =!tarea.isCompletada
+            
+            mostrarTareas();
+        }
+
+        function eliminarTarea(idTarea){
+            listaDeTareas = listaDeTareas.filter(tarea => tarea.id != idTarea );
+            mostrarTareas();
+        }
+        
+        function tareasTodas(){
+            console.log(listaDeTareas);
+            mostrarTareas(listaDeTareas);
+        }
+
+        function tareasPendientes(){
+            const TPendientes = listaDeTareas.filter(tarea => tarea.isCompletada===false);
+            console.log(TPendientes);
+            mostrarTareas(TPendientes);                  
+        }
+
+
+        //--------------------------------------------
+        // 4. EventListeners
+        //--------------------------------------------
+        formu.addEventListener("submit", (event) => {
+            event.preventDefault();
+            agregarTarea();
+        });
+
+        botonTodas.addEventListener('click', () => {
+           tareasTodas();
+        });
+
+        botonPendientes.addEventListener('click', () => {  
+            tareasPendientes();
+        });
+
+
+
+        //--------------------------------------------
+        // 5. Inicializar nuestro programa (que queremos que pase)
+        //--------------------------------------------
+        mostrarTareas();
+
+    </script>
+</body>
+
+</html>
