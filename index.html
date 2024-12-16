@@ -180,13 +180,22 @@
         .Seguidores {
             font-size: 1.2rem;
         }
+
         .Boton-Seguir {
             align-items: center;
-            margin:1.5rem 0;
+            margin: 1.5rem 0;
         }
 
         .Descripcion {
             text-align: center;
+        }
+
+        .acordeon-content{
+            display: none;
+        }
+
+        .active .acordeon-content {
+            display: block;
         }
 
     </style>
@@ -224,10 +233,27 @@
             </div>
 
             <button class="Boton Boton-Seguir">SEGUIR</button>
-            <p class="Descripcion">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed deserunt laboriosam vero iure sunt odio
+            <p class="Descripcion">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed deserunt laboriosam vero
+                iure sunt odio
                 repellat
                 at debitis, incidunt explicabo quis eaque iusto esse temporibus, obcaecati molestias itaque distinctio
                 animi.</p>
+
+            <div class="acordeon-item">
+                <div class="acordeon-header">Tareas Pendientes</div>
+                <div class="acordeon-content">
+                    <p></p>
+                    <p>x%</p>
+                </div>
+            </div>
+
+            <div class="acordeon-item">
+                <div class="acordeon-header">Tareas Completadas</div>
+                <div class="acordeon-content">
+                    <p></p>
+                    <p>x%</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -251,6 +277,9 @@
         const botonPerfil = document.getElementById("BotonPerfil")
         const listaBotones = document.querySelectorAll(".Tabs-botones")
         const listaPaginas = document.querySelectorAll(".Tabs-contenido")
+
+        const headers = document.querySelectorAll(".acordeon-header");
+        const items = document.querySelectorAll(".acordeon-item");
 
 
 
@@ -310,7 +339,7 @@
         }
 
         function eliminarTarea(idTarea) {
-            listaDeTareas = listaDeTareas.filter(tarea => tarea.id != idTarea);
+            listaDeTareas = listaDeTareas.filter(tarea => tarea.id != idTarea); // Traeme todas las tareas excepto esta (idTarea)
             mostrarTareas();
         }
 
@@ -358,6 +387,16 @@
                 quitarClases();
                 target.classList.add("u-visible")
                 boton.classList.add("u-active")
+            });
+        });
+
+        headers.forEach( (header) => {
+                header.addEventListener('click', () => {
+                    const item = header.closest(".acordeon-item");
+                    items.forEach(elemento => {
+                        elemento.classList.remove("active");
+                    });
+                    item.classList.toggle("active");     
             });
         });
 
